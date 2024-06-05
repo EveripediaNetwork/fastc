@@ -1,1 +1,4 @@
-
+transformers
+huggingface-hub
+scikit-learn
+tqdm

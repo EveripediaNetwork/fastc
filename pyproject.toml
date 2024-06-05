@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastc"
+version = "1.2406.1"
+description = ""
+authors = [
+    {name = "Rodrigo Martínez (brunneis)", email = "dev@brunneis.com"}
+]
+license = {text = "GNU General Public License v3 (GPLv3)"}
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.urls]
+Repository = "https://github.com/EveripediaNetwork/fastc"
+
+[project.optional-dependencies]
+dev = [
+    "transformers",
+    "huggingface-hub",
+    "scikit-learn",
+    "tqdm"
+]
+
+[tool.setuptools]
+package-data = {"fastc" = ["*"]}
+zip-safe = false
