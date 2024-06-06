@@ -78,7 +78,7 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
             'version': 1,
             'model': {
                 'type': 'centroids',
-                'embeddings': self._model.name_or_path,
+                'embeddings': self._embeddings_model.name_or_path,
                 'data': {
                     key: value.tolist()
                     for key, value in self._centroids_by_label.items()

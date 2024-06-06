@@ -6,14 +6,13 @@ from typing import Dict, Generator, List, Optional, Tuple
 import numpy as np
 import torch
 from tqdm import tqdm
-from transformers import AutoModel, AutoTokenizer
+
+from .embeddings import EmbeddingsModel
 
 
 class SentenceClassifierInterface:
     def __init__(self, model_name: str):
-        self._model_name = model_name
-        self._tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self._model = AutoModel.from_pretrained(model_name)
+        self._embeddings_model = EmbeddingsModel(model_name)
         self._texts_by_label = None
 
     def load_dataset(self, dataset: List[Tuple[str, int]]):
@@ -37,20 +36,19 @@ class SentenceClassifierInterface:
         title: Optional[str] = None,
         show_progress: bool = False,
     ) -> Generator[np.ndarray, None, None]:
-        self._model.eval()
         with torch.no_grad():
             for text in tqdm(
                 texts,
                 desc=title,
                 disable=not show_progress,
             ):
-                inputs = self._tokenizer(
+                inputs = self._embeddings_model.tokenizer(
                     text,
                     return_tensors="pt",
                     padding=True,
                     truncation=True,
                 )
-                outputs = self._model(**inputs)
+                outputs = self._embeddings_model.model(**inputs)
 
                 token_embeddings = outputs.last_hidden_state[0]
                 sentence_embedding = torch.mean(
