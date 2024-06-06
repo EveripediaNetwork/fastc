@@ -14,6 +14,7 @@ pip install fastc
 ```
 
 ## Train a model
+You can train a text classifier with just a few lines of code:
 ```python
 from fastc import SentenceClassifier
 
@@ -44,11 +45,13 @@ classifier.train()
 ```
 
 ## Export a model
+After training, you can save the model for future use:
 ```python
 classifier.save_model('./sentiment-classifier/')
 ```
 
 ## Load an existing model
+You can load a pre-trained model either from a directory or from HuggingFace:
 ```python
 # From a directory
 classifier = SentenceClassifier('./sentiment-classifier/')
@@ -57,7 +60,7 @@ classifier = SentenceClassifier('./sentiment-classifier/')
 classifier = SentenceClassifier('brunneis/sentiment-classifier')
 ```
 
-## Prediction
+## Class prediction
 ```python
 sentences = [
     'I am feeling well.',
