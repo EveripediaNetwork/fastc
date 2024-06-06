@@ -8,6 +8,13 @@
     <a href="https://github.com/EveripediaNetwork/fastc/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/EveripediaNetwork/fastc.svg?style=flat-square"></a>
 </p>
 
+
+## Key features
+- **Focused on CPU execution:** Use efficient models like `deepset/tinyroberta-6l-768d` for embedding generation.
+- **Cosine Similarity Classification:** Instead of fine-tuning, classify texts using cosine similarity between class embedding centroids and text embeddings.
+- **Efficient Multi-Classifier Execution:** Run multiple classifiers without extra overhead when using the same model for embeddings.
+
+
 ## Installation
 ```bash
 pip install -U fastc
