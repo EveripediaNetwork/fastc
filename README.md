@@ -1,4 +1,12 @@
-# fastc
+<p align="center">
+    <img src="./misc/logo.svg" alt="Cortex Logo" width="300"/>
+<p>
+
+<p align="center">
+    <a href="https://pypi.python.org/pypi/fastc/"><img alt="PyPi" src="https://img.shields.io/pypi/v/fastc.svg?style=flat-square"></a>
+    <!-- <a href="https://github.com/EveripediaNetwork/fastc/releases"><img alt="GitHub releases" src="https://img.shields.io/github/release/EveripediaNetwork/fastc.svg?style=flat-square"></a> -->
+    <!-- <a href="https://github.com/EveripediaNetwork/fastc/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/EveripediaNetwork/fastc.svg?style=flat-square"></a> -->
+</p>
 
 ## Installation
 ```bash
