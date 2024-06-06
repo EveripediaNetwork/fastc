@@ -50,6 +50,14 @@ After training, you can save the model for future use:
 classifier.save_model('./sentiment-classifier/')
 ```
 
+## Publish model to HuggingFace
+> [!IMPORTANT]  
+> Log in to HuggingFace first with `huggingface-cli login`
+
+```python
+classifier.push_to_hub('brunneis/sentiment-classifier')
+```
+
 ## Load an existing model
 You can load a pre-trained model either from a directory or from HuggingFace:
 ```python
