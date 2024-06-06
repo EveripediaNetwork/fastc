@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 from typing import Dict, Generator, List, Optional, Tuple
 
 import numpy as np
 import torch
+from huggingface_hub import HfApi, create_repo
 from tqdm import tqdm
 
 from .embeddings import EmbeddingsModel
@@ -17,10 +19,10 @@ class SentenceClassifierInterface:
 
     def load_dataset(self, dataset: List[Tuple[str, int]]):
         if not isinstance(dataset, list):
-            raise TypeError("Dataset must be a list of tuples.")
+            raise TypeError('Dataset must be a list of tuples.')
 
         if not all(isinstance(text, str) and isinstance(label, int) for text, label in dataset):  # noqa: E501
-            raise TypeError("Each tuple in the dataset must be (str, int).")
+            raise TypeError('Each tuple in the dataset must be (str, int).')
 
         texts_by_label = {}
         for text, label in dataset:
@@ -44,7 +46,7 @@ class SentenceClassifierInterface:
             ):
                 inputs = self._embeddings_model.tokenizer(
                     text,
-                    return_tensors="pt",
+                    return_tensors='pt',
                     padding=True,
                     truncation=True,
                 )
@@ -68,3 +70,17 @@ class SentenceClassifierInterface:
 
     def save_model(self, path: str):
         raise NotImplementedError
+
+    def push_to_hub(self, repo_id: str, **kwargs):
+        kwargs['exist_ok'] = True
+        kwargs['repo_type'] = 'model'
+        create_repo(repo_id, **kwargs)
+        config_path = '/tmp/fastc/config.json'
+        self.save_model('/tmp/fastc')
+        HfApi().upload_file(
+            path_or_fileobj=config_path,
+            path_in_repo='config.json',
+            repo_id=repo_id,
+            repo_type='model',
+        )
+        os.remove(config_path)
