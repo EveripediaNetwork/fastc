@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastc"
-version = "1.2406.1"
+version = "1.2406.2"
 description = ""
 authors = [
     {name = "Rodrigo Martínez (brunneis)", email = "dev@brunneis.com"}
@@ -35,5 +35,6 @@ dev = [
 ]
 
 [tool.setuptools]
+packages = ["fastc"]
 package-data = {"fastc" = ["*"]}
 zip-safe = false
