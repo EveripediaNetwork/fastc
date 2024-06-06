@@ -10,7 +10,7 @@
 
 ## Installation
 ```bash
-pip install fastc
+pip install -U fastc
 ```
 
 ## Train a model
