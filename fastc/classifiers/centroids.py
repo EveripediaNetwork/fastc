@@ -75,10 +75,10 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
     ):
         os.makedirs(path, exist_ok=True)
         model = {
-            'version': 1,
+            'version': 1.0,
             'model': {
                 'type': 'centroids',
-                'embeddings': self._embeddings_model.name_or_path,
+                'embeddings': self._embeddings_model._model.name_or_path,
                 'data': {
                     key: value.tolist()
                     for key, value in self._centroids_by_label.items()
