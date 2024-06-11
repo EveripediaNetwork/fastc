@@ -19,6 +19,7 @@ class EmbeddingsModel:
             self.model_name = model_name
             self._tokenizer = AutoTokenizer.from_pretrained(model_name)
             self._model = AutoModel.from_pretrained(model_name)
+            self._model.eval()
             self._initialized = True
 
     @property
