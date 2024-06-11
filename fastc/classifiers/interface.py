@@ -32,32 +32,33 @@ class SentenceClassifierInterface:
 
         self._texts_by_label = texts_by_label
 
+    @torch.no_grad()
     def get_embeddings(
         self,
         texts: List[str],
         title: Optional[str] = None,
         show_progress: bool = False,
-    ) -> Generator[np.ndarray, None, None]:
-        with torch.no_grad():
-            for text in tqdm(
-                texts,
-                desc=title,
-                disable=not show_progress,
-            ):
-                inputs = self._embeddings_model.tokenizer(
-                    text,
-                    return_tensors='pt',
-                    padding=True,
-                    truncation=True,
-                )
-                outputs = self._embeddings_model.model(**inputs)
+    ) -> Generator[torch.Tensor, None, None]:
+        for text in tqdm(
+            texts,
+            desc=title,
+            unit='text',
+            disable=not show_progress,
+        ):
+            inputs = self._embeddings_model.tokenizer(
+                text,
+                return_tensors='pt',
+                padding=True,
+                truncation=True,
+            )
+            outputs = self._embeddings_model.model(**inputs)
 
-                token_embeddings = outputs.last_hidden_state[0]
-                sentence_embedding = torch.mean(
-                    token_embeddings,
-                    dim=0,
-                )
-                yield sentence_embedding.numpy()
+            token_embeddings = outputs.last_hidden_state[0]
+            sentence_embedding = torch.mean(
+                token_embeddings,
+                dim=0,
+            )
+            yield sentence_embedding
 
     def train(self):
         raise NotImplementedError
