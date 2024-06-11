@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fastc"
 version = "1.2406.5"
-description = "Lightning-Fast Text Classification with LLM Embeddings on CPU"
+description = "Simple and Lightweight Text Classifiers with LLM Embeddings"
 authors = [
     {name = "Rodrigo Martínez (brunneis)", email = "dev@brunneis.com"}
 ]
