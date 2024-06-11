@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastc"
-version = "1.2406.4"
+version = "1.2406.5"
 description = "Lightning-Fast Text Classification with LLM Embeddings on CPU"
 authors = [
     {name = "Rodrigo Martínez (brunneis)", email = "dev@brunneis.com"}
@@ -30,7 +30,7 @@ Repository = "https://github.com/EveripediaNetwork/fastc"
 dev = [
     "transformers",
     "huggingface-hub",
-    "scikit-learn",
+    "torch",
     "tqdm"
 ]
 
