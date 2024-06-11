@@ -5,8 +5,8 @@ import json
 import os
 from typing import Dict, Generator, List
 
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+import torch
+import torch.nn.functional as F
 
 from .interface import SentenceClassifierInterface
 
@@ -18,55 +18,74 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
         model: Dict[int, List[float]] = None,
     ):
         super().__init__(embeddings_model)
-        self._centroids_by_label = None
+
+        self._centroids = {}
+        self._normalized_centroids = {}
+
         if model is not None:
             self._load_centroids(model)
+
+    @staticmethod
+    def _normalize(tensor: torch.Tensor) -> torch.Tensor:
+        return F.normalize(tensor, p=2, dim=-1)
 
     def train(self):
         if self._texts_by_label is None:
             raise ValueError("Dataset is not loaded.")
 
-        centroids_by_label = {}
         for label, texts in self._texts_by_label.items():
-            centroids_by_label[label] = np.mean(
-                np.array(list(self.get_embeddings(
-                    texts,
-                    title='Generating embeddings [{}]'.format(label),
-                    show_progress=True,
-                ))),
-                axis=0,
-            )
+            embeddings = list(self.get_embeddings(
+                texts,
+                title='Generating embeddings [{}]'.format(label),
+                show_progress=True,
+            ))
+            embeddings = torch.stack(embeddings)
+            centroid = torch.mean(embeddings, dim=0)
+            self._centroids[label] = centroid
+            self._normalized_centroids[label] = self._normalize(centroid)
 
-        self._centroids_by_label = centroids_by_label
-
-    def predict(self, texts: List[str]) -> Generator[Dict[int, float], None, None]:  # noqa: E501
-        if self._centroids_by_label is None:
+    def predict(
+        self,
+        texts: List[str],
+    ) -> Generator[Dict[int, float], None, None]:  # noqa: E501
+        if self._normalized_centroids is None:
             raise ValueError("Model is not trained.")
 
         if not isinstance(texts, list):
             raise TypeError("Input must be a list of strings.")
 
         texts_embeddings = self.get_embeddings(texts)
+        normalized_texts_embeddings = [
+            self._normalize(embedding)
+            for embedding in texts_embeddings
+        ]
 
-        for text_embedding in texts_embeddings:
-            cosine_similarities = {
-                label: cosine_similarity([text_embedding], [centroid])[0][0]
-                for label, centroid in self._centroids_by_label.items()
+        for text_embedding in normalized_texts_embeddings:
+            dot_products = {
+                label: torch.dot(text_embedding, centroid).item()
+                for label, centroid in self._normalized_centroids.items()
             }
 
-            total = sum(cosine_similarities.values())
-            probabilities = {
+            total = sum(dot_products.values())
+            scores = {
                 label: value / total
-                for label, value in cosine_similarities.items()
+                for label, value in dot_products.items()
             }
 
-            yield probabilities
+            yield scores
 
     def predict_one(self, text: str) -> Dict[int, float]:
         return list(self.predict([text]))[0]
 
     def _load_centroids(self, centroids: Dict):
-        self._centroids_by_label = {int(k): v for k, v in centroids.items()}
+        self._centroids = {
+            int(label): torch.tensor(centroid)
+            for label, centroid in centroids.items()
+        }
+        self._normalized_centroids = {
+            label: self._normalize(centroid)
+            for label, centroid in self._centroids.items()
+        }
 
     def save_model(
         self,
@@ -81,7 +100,7 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
                 'embeddings': self._embeddings_model._model.name_or_path,
                 'data': {
                     key: value.tolist()
-                    for key, value in self._centroids_by_label.items()
+                    for key, value in self._centroids.items()
                 },
             },
         }
