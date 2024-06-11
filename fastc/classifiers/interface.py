@@ -4,7 +4,6 @@
 import os
 from typing import Dict, Generator, List, Optional, Tuple
 
-import numpy as np
 import torch
 from huggingface_hub import HfApi, create_repo
 from tqdm import tqdm
@@ -20,9 +19,6 @@ class SentenceClassifierInterface:
     def load_dataset(self, dataset: List[Tuple[str, int]]):
         if not isinstance(dataset, list):
             raise TypeError('Dataset must be a list of tuples.')
-
-        if not all(isinstance(text, str) and isinstance(label, int) for text, label in dataset):  # noqa: E501
-            raise TypeError('Each tuple in the dataset must be (str, int).')
 
         texts_by_label = {}
         for text, label in dataset:
