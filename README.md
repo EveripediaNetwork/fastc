@@ -83,11 +83,11 @@ sentences = [
 ]
 
 # Single prediction
-probabilities = classifier.predict_one(sentences[0])
-print('positive' if probabilities[0] > .5 else 'negative')
+scores = classifier.predict_one(sentences[0])
+print('positive' if scores[0] > .5 else 'negative')
 
 # Batch predictions
-probabilities_list = classifier.predict(sentences)
-for probabilities in probabilities_list:
-    print('positive' if probabilities[0] > .5 else 'negative')
+scores_list = classifier.predict(sentences)
+for scores in scores_list:
+    print('positive' if scores[0] > .5 else 'negative')
 ```

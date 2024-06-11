@@ -1,4 +1,4 @@
 transformers
 huggingface-hub
-scikit-learn
+torch
 tqdm
