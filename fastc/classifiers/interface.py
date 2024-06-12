@@ -30,7 +30,7 @@ class SentenceClassifierInterface:
         for text, label in dataset:
             if label not in texts_by_label:
                 texts_by_label[label] = []
-            texts_by_label[label].append(self._template.format(text))
+            texts_by_label[label].append(text)
 
         self._texts_by_label = texts_by_label
 
@@ -48,7 +48,7 @@ class SentenceClassifierInterface:
             disable=not show_progress,
         ):
             inputs = self._embeddings_model.tokenizer(
-                text,
+                self._template.format(text),
                 return_tensors='pt',
                 padding=True,
                 truncation=True,
