@@ -8,12 +8,18 @@ import torch
 from huggingface_hub import HfApi, create_repo
 from tqdm import tqdm
 
+from ..template import Template
 from .embeddings import EmbeddingsModel
 
 
 class SentenceClassifierInterface:
-    def __init__(self, model_name: str):
-        self._embeddings_model = EmbeddingsModel(model_name)
+    def __init__(
+        self,
+        embeddings_model: str,
+        template: Template = None,
+    ):
+        self._embeddings_model = EmbeddingsModel(embeddings_model)
+        self._template = template
         self._texts_by_label = None
 
     def load_dataset(self, dataset: List[Tuple[str, int]]):

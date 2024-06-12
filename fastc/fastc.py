@@ -25,17 +25,19 @@ class SentenceClassifier:
         model_type: str = None,
         template: str = None,
     ):
+        model_data = None
+
         if model is not None:
             config = cls._get_config(model)
-            if (
-                'version' not in config
-                or config['version'] != 1
-            ):
-                raise ValueError("Unsupported version.")
+            model_config = config['model']
+            model_type = model_config['type']
+            model_data = model_config['data']
+            embeddings_model = model_config['embeddings']
 
-            model_type = config['model']['type']
-            embeddings_model = config['model']['embeddings']
-            model = config['model']['data']
+            if 'template' in model_config:
+                template_text = model_config['template']['text']
+                template_variables = model_config['template']['variables']
+                template = Template(template_text, **template_variables)
 
         if embeddings_model is None:
             embeddings_model = 'deepset/tinyroberta-6l-768d'
@@ -49,7 +51,7 @@ class SentenceClassifier:
         if model_type == ModelTypes.CENTROIDS:
             return CentroidSentenceClassifier(
                 embeddings_model=embeddings_model,
-                model=model,
+                model_data=model_data,
                 template=template,
             )
 

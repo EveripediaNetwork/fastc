@@ -16,18 +16,19 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
     def __init__(
         self,
         embeddings_model: str,
-        model: Dict[int, List[float]] = None,
+        model_data: Dict[int, List[float]] = None,
         template: Template = None,
     ):
-        super().__init__(embeddings_model)
+        super().__init__(
+            embeddings_model=embeddings_model,
+            template=template,
+        )
 
         self._centroids = {}
         self._normalized_centroids = {}
 
-        if model is not None:
-            self._load_centroids(model)
-
-        self._template = template
+        if model_data is not None:
+            self._load_centroids(model_data)
 
     @staticmethod
     def _normalize(tensor: torch.Tensor) -> torch.Tensor:
