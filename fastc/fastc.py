@@ -8,6 +8,7 @@ from huggingface_hub import hf_hub_download
 from transformers import logging
 
 from .classifiers.centroids import CentroidSentenceClassifier
+from .template import Template
 
 logging.set_verbosity_error()
 
@@ -18,34 +19,43 @@ class ModelTypes:
 
 class SentenceClassifier:
     def __new__(
-            cls,
-            model: str = None,
-            embeddings_model: str = None,
+        cls,
+        model: str = None,
+        embeddings_model: str = None,
+        model_type: str = None,
+        template: str = None,
     ):
-        model_type = ModelTypes.CENTROIDS
+        model_data = None
+
+        if model is not None:
+            config = cls._get_config(model)
+            model_config = config['model']
+            model_type = model_config['type']
+            model_data = model_config['data']
+            embeddings_model = model_config['embeddings']
+
+            if 'template' in model_config:
+                template_text = model_config['template']['text']
+                template_variables = model_config['template']['variables']
+                template = Template(template_text, **template_variables)
 
         if embeddings_model is None:
             embeddings_model = 'deepset/tinyroberta-6l-768d'
 
-        if model is not None:
-            config = cls._get_config(model)
-            if (
-                'version' not in config
-                or config['version'] != 1
-            ):
-                raise ValueError("Unsupported version.")
+        if model_type is None:
+            model_type = ModelTypes.CENTROIDS
 
-            model_type = config['model']['type']
-            embeddings_model = config['model']['embeddings']
-            model = config['model']['data']
+        if template is None:
+            template = Template()
 
         if model_type == ModelTypes.CENTROIDS:
             return CentroidSentenceClassifier(
                 embeddings_model=embeddings_model,
-                model=model,
+                model_data=model_data,
+                template=template,
             )
-        else:
-            raise ValueError("Unsupported model type.")
+
+        raise ValueError("Unsupported model type.")
 
     @staticmethod
     def _get_config(model: str):

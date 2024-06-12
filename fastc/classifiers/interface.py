@@ -8,12 +8,18 @@ import torch
 from huggingface_hub import HfApi, create_repo
 from tqdm import tqdm
 
+from ..template import Template
 from .embeddings import EmbeddingsModel
 
 
 class SentenceClassifierInterface:
-    def __init__(self, model_name: str):
-        self._embeddings_model = EmbeddingsModel(model_name)
+    def __init__(
+        self,
+        embeddings_model: str,
+        template: Template = None,
+    ):
+        self._embeddings_model = EmbeddingsModel(embeddings_model)
+        self._template = template
         self._texts_by_label = None
 
     def load_dataset(self, dataset: List[Tuple[str, int]]):
@@ -24,7 +30,7 @@ class SentenceClassifierInterface:
         for text, label in dataset:
             if label not in texts_by_label:
                 texts_by_label[label] = []
-            texts_by_label[label].append(text)
+            texts_by_label[label].append(self._template.format(text))
 
         self._texts_by_label = texts_by_label
 
@@ -81,3 +87,15 @@ class SentenceClassifierInterface:
             repo_type='model',
         )
         os.remove(config_path)
+
+    def _get_info(self):
+        return {
+            'version': 2.0,
+            'model': {
+                'embeddings': self._embeddings_model._model.name_or_path,
+                'template': {
+                    'text': self._template._template,
+                    'variables': self._template._variables,
+                },
+            },
+        }

@@ -8,6 +8,7 @@ from typing import Dict, Generator, List
 import torch
 import torch.nn.functional as F
 
+from ..template import Template
 from .interface import SentenceClassifierInterface
 
 
@@ -15,15 +16,19 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
     def __init__(
         self,
         embeddings_model: str,
-        model: Dict[int, List[float]] = None,
+        model_data: Dict[int, List[float]] = None,
+        template: Template = None,
     ):
-        super().__init__(embeddings_model)
+        super().__init__(
+            embeddings_model=embeddings_model,
+            template=template,
+        )
 
         self._centroids = {}
         self._normalized_centroids = {}
 
-        if model is not None:
-            self._load_centroids(model)
+        if model_data is not None:
+            self._load_centroids(model_data)
 
     @staticmethod
     def _normalize(tensor: torch.Tensor) -> torch.Tensor:
@@ -89,26 +94,25 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
             for label, centroid in self._centroids.items()
         }
 
+    def _get_info(self):
+        info = super()._get_info()
+        info['model']['type'] = 'centroids'
+        info['model']['data'] = {
+            key: value.tolist()
+            for key, value in self._centroids.items()
+        }
+        return info
+
     def save_model(
         self,
         path: str,
         description: str = None,
     ):
         os.makedirs(path, exist_ok=True)
-        model = {
-            'version': 1.0,
-            'model': {
-                'type': 'centroids',
-                'embeddings': self._embeddings_model._model.name_or_path,
-                'data': {
-                    key: value.tolist()
-                    for key, value in self._centroids.items()
-                },
-            },
-        }
 
+        model_info = self._get_info()
         if description is not None:
-            model['description'] = description
+            model_info['description'] = description
 
         with open(os.path.join(path, 'config.json'), 'w') as f:
-            json.dump(model, f, indent=4)
+            json.dump(model_info, f, indent=4)
