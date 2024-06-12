@@ -8,6 +8,7 @@ from huggingface_hub import hf_hub_download
 from transformers import logging
 
 from .classifiers.centroids import CentroidSentenceClassifier
+from .template import Template
 
 logging.set_verbosity_error()
 
@@ -18,15 +19,12 @@ class ModelTypes:
 
 class SentenceClassifier:
     def __new__(
-            cls,
-            model: str = None,
-            embeddings_model: str = None,
+        cls,
+        model: str = None,
+        embeddings_model: str = None,
+        model_type: str = None,
+        template: str = None,
     ):
-        model_type = ModelTypes.CENTROIDS
-
-        if embeddings_model is None:
-            embeddings_model = 'deepset/tinyroberta-6l-768d'
-
         if model is not None:
             config = cls._get_config(model)
             if (
@@ -39,13 +37,23 @@ class SentenceClassifier:
             embeddings_model = config['model']['embeddings']
             model = config['model']['data']
 
+        if embeddings_model is None:
+            embeddings_model = 'deepset/tinyroberta-6l-768d'
+
+        if model_type is None:
+            model_type = ModelTypes.CENTROIDS
+
+        if template is None:
+            template = Template()
+
         if model_type == ModelTypes.CENTROIDS:
             return CentroidSentenceClassifier(
                 embeddings_model=embeddings_model,
                 model=model,
+                template=template,
             )
-        else:
-            raise ValueError("Unsupported model type.")
+
+        raise ValueError("Unsupported model type.")
 
     @staticmethod
     def _get_config(model: str):
@@ -60,4 +68,5 @@ class SentenceClassifier:
             )
         with open(file_path, 'r') as model_file:
             model = json.load(model_file)
+        return model
         return model

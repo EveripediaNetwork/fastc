@@ -8,6 +8,7 @@ from typing import Dict, Generator, List
 import torch
 import torch.nn.functional as F
 
+from ..template import Template
 from .interface import SentenceClassifierInterface
 
 
@@ -16,6 +17,7 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
         self,
         embeddings_model: str,
         model: Dict[int, List[float]] = None,
+        template: Template = None,
     ):
         super().__init__(embeddings_model)
 
@@ -24,6 +26,8 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
 
         if model is not None:
             self._load_centroids(model)
+
+        self._template = template
 
     @staticmethod
     def _normalize(tensor: torch.Tensor) -> torch.Tensor:
@@ -96,7 +100,7 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
     ):
         os.makedirs(path, exist_ok=True)
         model = {
-            'version': 1.0,
+            'version': 2.0,
             'model': {
                 'type': 'centroids',
                 'embeddings': self._embeddings_model._model.name_or_path,

@@ -24,7 +24,7 @@ class SentenceClassifierInterface:
         for text, label in dataset:
             if label not in texts_by_label:
                 texts_by_label[label] = []
-            texts_by_label[label].append(text)
+            texts_by_label[label].append(self._template.format(text))
 
         self._texts_by_label = texts_by_label
 
