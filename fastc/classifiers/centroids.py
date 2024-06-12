@@ -81,7 +81,7 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
 
     def _load_centroids(self, centroids: Dict):
         self._centroids = {
-            int(label): torch.tensor(centroid)
+            label: torch.tensor(centroid)
             for label, centroid in centroids.items()
         }
         self._normalized_centroids = {
