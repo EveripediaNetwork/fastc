@@ -66,10 +66,12 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
                 for label, centroid in self._normalized_centroids.items()
             }
 
-            total = sum(dot_products.values())
+            dot_product_values = torch.tensor(list(dot_products.values()))
+            softmax_scores = F.softmax(dot_product_values, dim=0).tolist()
+
             scores = {
-                label: value / total
-                for label, value in dot_products.items()
+                label: score
+                for label, score in zip(dot_products.keys(), softmax_scores)
             }
 
             yield scores
