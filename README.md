@@ -26,24 +26,24 @@ You can train a text classifier with just a few lines of code:
 from fastc import SentenceClassifier
 
 tuples = [
-    ("I just got a promotion! Feeling fantastic.", 0),
-    ("Today was terrible. I lost my wallet and missed the bus.", 1),
-    ("I had a great time with my friends at the party.", 0),
-    ("I'm so frustrated with the traffic jam this morning.", 1),
-    ("My vacation was wonderful and relaxing.", 0),
-    ("I didn't get any sleep last night because of the noise.", 1),
-    ("I'm so excited for the concert tonight!", 0),
-    ("I'm disappointed with the service at the restaurant.", 1),
-    ("The weather is beautiful and I enjoyed my walk.", 0),
-    ("I had a bad day. Nothing went right.", 1),
-    ("I'm thrilled to announce that we are expecting a baby!", 0),
-    ("I feel so lonely and sad today.", 1),
-    ("My team won the championship! We are the champions.", 0),
-    ("I can't stand my job anymore, it's so stressful.", 1),
-    ("I love spending time with my family during the holidays.", 0),
-    ("My computer crashed and I lost all my work.", 1),
-    ("I'm proud of my achievements this year.", 0),
-    ("I'm exhausted and overwhelmed with everything.", 0),
+    ("I just got a promotion! Feeling fantastic.", 'positive'),
+    ("Today was terrible. I lost my wallet and missed the bus.", 'negative'),
+    ("I had a great time with my friends at the party.", 'positive'),
+    ("I'm so frustrated with the traffic jam this morning.", 'negative'),
+    ("My vacation was wonderful and relaxing.", 'positive'),
+    ("I didn't get any sleep last night because of the noise.", 'negative'),
+    ("I'm so excited for the concert tonight!", 'positive'),
+    ("I'm disappointed with the service at the restaurant.", 'negative'),
+    ("The weather is beautiful and I enjoyed my walk.", 'positive'),
+    ("I had a bad day. Nothing went right.", 'negative'),
+    ("I'm thrilled to announce that we are expecting a baby!", 'positive'),
+    ("I feel so lonely and sad today.", 'negative'),
+    ("My team won the championship! We are the champions.", 'positive'),
+    ("I can't stand my job anymore, it's so stressful.", 'negative'),
+    ("I love spending time with my family during the holidays.", 'positive'),
+    ("My computer crashed and I lost all my work.", 'negative'),
+    ("I'm proud of my achievements this year.", 'positive'),
+    ("I'm exhausted and overwhelmed with everything.", 'positive'),
 ]
 
 classifier = SentenceClassifier(embeddings_model='microsoft/deberta-base')
@@ -90,4 +90,22 @@ print('positive' if scores[0] > .5 else 'negative')
 scores_list = classifier.predict(sentences)
 for scores in scores_list:
     print('positive' if scores[0] > .5 else 'negative')
+```
+
+## Templates and Instruct Models
+You can use instruct templates with instruct models such as `intfloat/multilingual-e5-large-instruct`. Other models may also improve in performance by using templates, even if they were not explicitly trained with them.
+
+```python
+from fastc import ModelTemplates, SentenceClassifier, Template
+
+# template_text = 'Instruct: {instruction}\nQuery: {text}'
+template_text = ModelTemplates.E5_INSTRUCT
+
+classifier = SentenceClassifier(
+    embeddings_model='intfloat/multilingual-e5-large-instruct',
+    template=Template(
+        template_text,
+        instruction='Classify as positive or negative'
+    ),
+)
 ```
