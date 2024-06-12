@@ -69,4 +69,3 @@ class SentenceClassifier:
         with open(file_path, 'r') as model_file:
             model = json.load(model_file)
         return model
-        return model

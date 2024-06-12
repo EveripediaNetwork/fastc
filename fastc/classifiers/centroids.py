@@ -93,26 +93,25 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
             for label, centroid in self._centroids.items()
         }
 
+    def _get_info(self):
+        info = super()._get_info()
+        info['model']['type'] = 'centroids'
+        info['model']['data'] = {
+            key: value.tolist()
+            for key, value in self._centroids.items()
+        }
+        return info
+
     def save_model(
         self,
         path: str,
         description: str = None,
     ):
         os.makedirs(path, exist_ok=True)
-        model = {
-            'version': 2.0,
-            'model': {
-                'type': 'centroids',
-                'embeddings': self._embeddings_model._model.name_or_path,
-                'data': {
-                    key: value.tolist()
-                    for key, value in self._centroids.items()
-                },
-            },
-        }
 
+        model_info = self._get_info()
         if description is not None:
-            model['description'] = description
+            model_info['description'] = description
 
         with open(os.path.join(path, 'config.json'), 'w') as f:
-            json.dump(model, f, indent=4)
+            json.dump(model_info, f, indent=4)
