@@ -84,12 +84,12 @@ sentences = [
 
 # Single prediction
 scores = classifier.predict_one(sentences[0])
-print('positive' if scores[0] > .5 else 'negative')
+print(max(scores, key=scores.get))
 
 # Batch predictions
 scores_list = classifier.predict(sentences)
 for scores in scores_list:
-    print('positive' if scores[0] > .5 else 'negative')
+    print(max(scores, key=scores.get))
 ```
 
 ## Templates and Instruct Models
