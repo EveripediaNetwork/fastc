@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from importlib import metadata
+
+import fastc
+
+
+class VersionResource:
+    def on_get(self, _, response):
+        response.media = {
+            'version': metadata.version(fastc.__name__),
+        }

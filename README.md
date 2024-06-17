@@ -9,18 +9,18 @@
 </p>
 
 
-## Key features
+# Key features
 - **Focused on CPU execution:** Use efficient models like `deepset/tinyroberta-6l-768d` for embedding generation.
 - **Cosine Similarity Classification:** Instead of fine-tuning, classify texts using cosine similarity between class embedding centroids and text embeddings.
 - **Efficient Multi-Classifier Execution:** Run multiple classifiers without extra overhead when using the same model for embeddings.
 
 
-## Installation
+# Installation
 ```bash
 pip install -U fastc
 ```
 
-## Train a model
+# Train a model
 You can train a text classifier with just a few lines of code:
 ```python
 from fastc import SentenceClassifier
@@ -51,13 +51,13 @@ classifier.load_dataset(tuples)
 classifier.train()
 ```
 
-## Export a model
+# Export a model
 After training, you can save the model for future use:
 ```python
 classifier.save_model('./sentiment-classifier/')
 ```
 
-## Publish model to HuggingFace
+# Publish model to HuggingFace
 > [!IMPORTANT]  
 > Log in to HuggingFace first with `huggingface-cli login`
 
@@ -65,7 +65,7 @@ classifier.save_model('./sentiment-classifier/')
 classifier.push_to_hub('brunneis/sentiment-classifier')
 ```
 
-## Load an existing model
+# Load an existing model
 You can load a pre-trained model either from a directory or from HuggingFace:
 ```python
 # From a directory
@@ -75,7 +75,7 @@ classifier = SentenceClassifier('./sentiment-classifier/')
 classifier = SentenceClassifier('brunneis/sentiment-classifier')
 ```
 
-## Class prediction
+# Class prediction
 ```python
 sentences = [
     'I am feeling well.',
@@ -92,7 +92,7 @@ for scores in scores_list:
     print(max(scores, key=scores.get))
 ```
 
-## Templates and Instruct Models
+# Templates and Instruct Models
 You can use instruct templates with instruct models such as `intfloat/multilingual-e5-large-instruct`. Other models may also improve in performance by using templates, even if they were not explicitly trained with them.
 
 ```python
@@ -108,4 +108,51 @@ classifier = SentenceClassifier(
         instruction='Classify as positive or negative'
     ),
 )
+```
+# Inference Server
+
+To launch the dockerized inference server, use the following script:
+```bash
+./server/scripts/start-docker.sh
+```
+
+Alternatively, on the host machine:
+```bash
+./server/scripts/start-server.sh
+```
+
+In both cases, an HTTP API will be available, listening on the `fastc-server` *[hashport](https://github.com/labteral/hashport)* `53256`.
+
+## Inference
+
+To classify text, use `POST /` with a JSON payload such as:
+```json
+{
+    "model": "braindao/tinyroberta-6l-768d-language-identifier-en-es-ko-zh-fastc",
+    "text": "오늘 저녁에 친구들과 함께 pizza를 먹을 거예요."
+}
+```
+
+Response:
+```json
+{
+    "label": "ko",
+    "scores": {
+        "en": 0.23850876092910767,
+        "es": 0.24473699927330017,
+        "ko": 0.2621513605117798,
+        "zh": 0.25460284948349
+    }
+}
+```
+
+## Version
+
+To check the `fastc` version, use `GET /version`:
+
+Response:
+```json
+{
+    "version": "2.2406.0"
+}
 ```
