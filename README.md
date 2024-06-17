@@ -10,10 +10,9 @@
 
 
 # Key features
-- **Focused on CPU execution:** Use efficient models like `deepset/tinyroberta-6l-768d` for embedding generation.
-- **Cosine Similarity Classification:** Instead of fine-tuning, classify texts using cosine similarity between class embedding centroids and text embeddings.
-- **Efficient Multi-Classifier Execution:** Run multiple classifiers without extra overhead when using the same model for embeddings.
-
+- **Focused on limited-memory CPU execution:** Use efficient distilled models such as [`deepset/tinyroberta-6l-768d`](https://huggingface.co/deepset/tinyroberta-6l-768d) for embedding generation.
+- **Cosine Similarity and Logistic Regression Classification:** Bypass the need for fine-tuning by utilizing LLM embeddings to efficiently categorize texts using either cosine similarity with class centroids or logistic regression.
+- **Efficient Parallel Execution:** Run hundreds of classifiers concurrently with minimal overhead by sharing the same model for embedding generation.
 
 # Installation
 ```bash
