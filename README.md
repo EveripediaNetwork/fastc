@@ -121,7 +121,7 @@ Alternatively, on the host machine:
 ./server/scripts/start-server.sh
 ```
 
-In both cases, an HTTP API will be available, listening on the FastC server via *[hashport](https://github.com/labteral/hashport)* at port `53256`.
+In both cases, an HTTP API will be available, listening on the `fastc` server via *[hashport](https://github.com/labteral/hashport)* at port `53256`.
 
 ## Inference
 
