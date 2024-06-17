@@ -4,7 +4,7 @@
 import falcon
 import yaml
 from resources.inference import InferenceResource
-from resources.root import RootResource
+from resources.version import VersionResource
 
 with open('./config.yaml', 'r') as stream:
     config = yaml.safe_load(stream)
@@ -18,5 +18,5 @@ inference_resource = InferenceResource(
     download_on_demand=config.get('download_on_demand', False)
 )
 
-app.add_route('/', RootResource())
-app.add_route('/classify', inference_resource)
+app.add_route('/', inference_resource)
+app.add_route('/version', VersionResource())
