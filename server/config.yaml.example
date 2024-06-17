@@ -1,0 +1,4 @@
+---
+download_on_demand: true
+cached_models:
+  - 'braindao/tinyroberta-6l-768d-language-identifier-en-es-ko-zh-fastc'
