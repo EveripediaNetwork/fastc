@@ -79,7 +79,12 @@ class CentroidSentenceClassifier(SentenceClassifierInterface):
                 for label, score in zip(dot_products.keys(), softmax_scores)
             }
 
-            yield scores
+            result = {
+                'label': max(scores, key=scores.get),
+                'scores': scores,
+            }
+
+            yield result
 
     def predict_one(self, text: str) -> Dict[int, float]:
         return list(self.predict([text]))[0]
