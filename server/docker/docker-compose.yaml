@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: ./server/docker/Dockerfile
+    volumes:
+      - ./server/config.yaml:/opt/app/config.yaml
+      - ${HOME}/.cache/huggingface/:/home/cortex/.cache/huggingface/
+    ports:
+      - 53256:53256
+    restart: always
